@@ -1,0 +1,27 @@
+[package]
+name = "api-evenxia"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = {version="0.8.4",features=["macros"]}
+bcrypt = "0.17.1"
+dotenv = "0.15.0"
+serde = "1.0.219"
+sqlx = { version = "0.8.3", features = [
+    "runtime-tokio",
+    "any",
+    "postgres",
+    "uuid",
+    "time",
+    "bigdecimal",
+] }
+tokio = {version="1.47.1",features=["full"]}
+tower-http = {version="0.6.6",features=["cors"]}
+tracing = "0.1.41"
+time = { version = "0.3.43", features = ["formatting", "parsing", "serde"]  }
+tracing-subscriber = "0.3.20"
+uuid = {version="1.18.1", features = ["v7","fast-rng","macro-diagnostics","serde"]}
+chrono = "0.4.42"
+jsonwebtoken = "9.3.1"
+serde_json = "1.0.145"
