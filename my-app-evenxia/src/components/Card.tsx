@@ -1,4 +1,14 @@
-export default function Card() {
+type CardProps = {
+    readonly title?: string;
+    readonly description?: string;
+    readonly imageUrl?: string;
+    readonly start_date?: string;
+    readonly end_date?: string;
+    readonly address?: string;
+
+    readonly onButtonClick?: () => void;
+};
+export default function Card({title="",description="",imageUrl="", onButtonClick}: CardProps) {
     return (
     <div className="card bg-base-100  shadow-sm">
         <figure>
@@ -7,10 +17,10 @@ export default function Card() {
                 alt="Shoes" />
         </figure>
         <div className="card-body">
-            <h2 className="card-title">Card Title</h2>
-            <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
+            <h2 className="card-title">{title}</h2>
+            <p>{description}</p>
             <div className="card-actions justify-end">
-                <button className="btn btn-primary">Buy Now</button>
+                <button onClick={onButtonClick} className="btn btn-primary">Voir plus en détails</button>
             </div>
         </div>
     </div>)

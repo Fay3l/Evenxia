@@ -2,7 +2,7 @@ use bcrypt::{hash, verify, DEFAULT_COST};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use tracing::info;
 
-use crate::models::{CreateEvent, CreateUser, UpdateEvent, UpdateUser};
+use crate::models::{CreateEvent, CreateUser, GetEvent, UpdateEvent, UpdateUser};
 
 #[derive(Debug, Clone)]
 pub struct DB {
@@ -128,16 +128,19 @@ impl DB {
         // Convert OffsetDateTime to chrono::DateTime<Utc>
         sqlx::query!(
             r#"
-            INSERT INTO events (id, title, description, date, location, image_url, category)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO events (id, title, description, date, address, image_url, category,city,start_date,end_date)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             "#,
             id,
             create_event.title,
             create_event.description,
             date,
-            create_event.location,
+            create_event.address,
             create_event.image_url,
-            create_event.category
+            create_event.category,
+            create_event.city,
+            create_event.start_date,
+            create_event.end_date,
         )
         .execute(&self.db)
         .await?;
@@ -150,19 +153,25 @@ impl DB {
             UPDATE events SET 
                 title = COALESCE($2, title),
                 description = COALESCE($3, description),
-                location = COALESCE($4, location),
+                address = COALESCE($4, address),
                 image_url = COALESCE($5, image_url),
                 category = COALESCE($6, category),
-                "public" = COALESCE($7, "public")
+                "public" = COALESCE($7, "public"),
+                city = COALESCE($8, city),
+                start_date = COALESCE($9, start_date),
+                end_date = COALESCE($10, end_date)
             WHERE id = $1
             "#,
             update_event.id,
             update_event.title,
             update_event.description,
-            update_event.location,
+            update_event.address,
             update_event.image_url,
             update_event.category,
-            update_event.public
+            update_event.public,
+            update_event.city,
+            update_event.start_date,
+            update_event.end_date
         )
         .execute(&self.db)
         .await?;
@@ -182,9 +191,10 @@ impl DB {
     }
 
     pub async fn get_event(&self, event_id: uuid::Uuid) -> Result<(), sqlx::Error> {
-        let _event = sqlx::query!(
+        let _event = sqlx::query_as!(
+            GetEvent,
             r#"
-            SELECT id, title, description, date, location, image_url, category,public, id_user FROM events WHERE id = $1
+            SELECT id, title, description, date, address, image_url, category,public, id_user,start_date,end_date,city FROM events WHERE id = $1
             "#,
             event_id
         )
