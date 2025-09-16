@@ -1,27 +1,30 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+
 import Button from "@/components/Button";
+import Card from "@/components/Card";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export default function Home() {
   return (
     <div>
-      <header className="flex flex-row justify-between m-10">
-        <p>Evenxia</p>
-        <div className="flex flex-row gap-4">
-          <Button>Login</Button>
-          <Button>Sign Up</Button>
+      <div className="flex flex-col gap-4 p-4">
+        <div className="navbar bg-base-100 rounded-full  flex justify-between">
+          <div className="m-4 font-bold">Evenxia</div>
+          <div className="m-4 flex gap-2">
+            <button className="btn">Login</button>
+            <button className="btn">Sign up</button>
+          </div>
         </div>
-      </header>
+        <div className="flex items-center justify-center gap-4">
+          <input type="text" placeholder="Chercher un événement ..." className="input input-neutral " />
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          <Card></Card>
+          <Card></Card>
+          <Card></Card>
+          <Card></Card>
+          <Card></Card>
+        </div>
+      </div>
     </div>
   );
 }
