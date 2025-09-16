@@ -5,23 +5,28 @@ type CardProps = {
     readonly start_date?: string;
     readonly end_date?: string;
     readonly address?: string;
-
     readonly onButtonClick?: () => void;
 };
-export default function Card({title="",description="",imageUrl="", onButtonClick}: CardProps) {
+
+export default function Card({ title = "", description = "", imageUrl = "", address = "", start_date = "", end_date = "", onButtonClick }: CardProps) {
     return (
-    <div className="card bg-base-100  shadow-sm">
-        <figure>
-            <img
-                src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-                alt="Shoes" />
-        </figure>
-        <div className="card-body">
-            <h2 className="card-title">{title}</h2>
-            <p>{description}</p>
-            <div className="card-actions justify-end">
-                <button onClick={onButtonClick} className="btn btn-primary">Voir plus en détails</button>
+        <div className="card bg-base-100  shadow-sm">
+            <figure>
+                <img
+                    src={imageUrl}
+                    alt="Event" />
+            </figure>
+            <div className="card-body flex flex-col justify-between">
+                <h2 className="card-title">{title}</h2>
+                <div className="flex flex-col gap-2 justify-around">
+                    <p>{description}</p>
+                </div>
+                <div className="card-actions justify-end">
+                    <div className="flex flex-row justify-between items-center w-full">
+                        <p className="font-bold">{start_date}</p>
+                        <button onClick={onButtonClick} className="btn btn-primary">Voir plus en détails</button>
+                    </div>  
+                </div>
             </div>
-        </div>
-    </div>)
+        </div>)
 }
