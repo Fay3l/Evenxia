@@ -13,6 +13,7 @@ export default function Card({ title = "", description = "", imageUrl = "", addr
         <div className="card bg-base-100  shadow-sm">
             <figure>
                 <img
+                    className=""
                     src={imageUrl}
                     alt="Event" />
             </figure>
@@ -21,11 +22,14 @@ export default function Card({ title = "", description = "", imageUrl = "", addr
                 <div className="flex flex-col gap-2 justify-around">
                     <p>{description}</p>
                 </div>
-                <div className="card-actions justify-end">
-                    <div className="flex flex-row justify-between items-center w-full">
+                <div className="card-actions justify-end max-sm:justify-none">
+                    <div className="flex flex-row justify-between items-center w-full max-sm:flex-col gap-2">
                         <p className="font-bold">{start_date}</p>
-                        <button onClick={onButtonClick} className="btn btn-primary">Voir plus en détails</button>
+                        <button onClick={onButtonClick} className="btn btn-primary max-sm:btn-sm p-4">Voir plus en détails</button>
                     </div>  
+                    <div className="max-sm:text-sm">
+                        <p className="italic">{address}</p>
+                    </div>
                 </div>
             </div>
         </div>)

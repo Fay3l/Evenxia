@@ -2,7 +2,7 @@ use bcrypt::{hash, verify, DEFAULT_COST};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use tracing::info;
 
-use crate::models::{CreateEvent, CreateUser, GetEvent, UpdateEvent, UpdateUser};
+use crate::models::{CreateEvent, CreateUser, GetEvent, GetEventViews, UpdateEvent, UpdateUser};
 
 #[derive(Debug, Clone)]
 pub struct DB {
@@ -124,23 +124,24 @@ impl DB {
 
     pub async fn create_event(&self, create_event: CreateEvent) -> Result<(), sqlx::Error> {
         let id = uuid::Uuid::now_v7();
-        let date = time::OffsetDateTime::now_utc();
+        let created_at = time::OffsetDateTime::now_utc();
         // Convert OffsetDateTime to chrono::DateTime<Utc>
         sqlx::query!(
             r#"
-            INSERT INTO events (id, title, description, date, address, image_url, category,city,start_date,end_date)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            INSERT INTO events (id, title, description, created_at, address, image_url, category,city,start_date,end_date,total_places)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             "#,
             id,
             create_event.title,
             create_event.description,
-            date,
+            created_at,
             create_event.address,
             create_event.image_url,
             create_event.category,
             create_event.city,
             create_event.start_date,
             create_event.end_date,
+            create_event.places,
         )
         .execute(&self.db)
         .await?;
@@ -190,16 +191,52 @@ impl DB {
         Ok(())
     }
 
-    pub async fn get_event(&self, event_id: uuid::Uuid) -> Result<(), sqlx::Error> {
-        let _event = sqlx::query_as!(
-            GetEvent,
+    pub async fn get_events(&self) -> Result<Vec<GetEvent>, sqlx::Error> {
+        let mut events = vec![];
+        let _event = sqlx::query!(
             r#"
-            SELECT id, title, description, date, address, image_url, category,public, id_user,start_date,end_date,city FROM events WHERE id = $1
+            SELECT id, title, description, created_at, address, image_url, category,public, user_id,start_date,end_date,city,total_places FROM events
+            "#
+        )
+        .fetch_all(&self.db)
+        .await?;
+        for event in &_event {
+            let get_views = self.get_viewed_event(event.id).await?;
+            let event = GetEvent {
+                id: event.id,
+                title: event.title.clone(),
+                description: event.description.clone(),
+                created_at: event.created_at,
+                address: event.address.clone(),
+                image_url: event.image_url.clone(),
+                category: event.category.clone(),
+                public: event.public,
+                user_id: event.user_id,
+                views: get_views.views,
+                start_date: event.start_date,
+                end_date: event.end_date,
+                city: event.city.clone(),
+                total_places: get_views,
+            };
+            events.push(event);
+        }
+
+        Ok(events)
+    }
+
+    pub async fn get_viewed_event(
+        &self,
+        event_id: uuid::Uuid,
+    ) -> Result<GetEventViews, sqlx::Error> {
+        let events = sqlx::query_as!(
+            GetEventViews,
+            r#"
+            SELECT COUNT(*) as views  FROM event_views WHERE event_id = $1
             "#,
             event_id
         )
         .fetch_one(&self.db)
         .await?;
-        Ok(())
+        Ok(events)
     }
 }

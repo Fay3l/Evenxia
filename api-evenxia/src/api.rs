@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Request, State}, handler::Handler, http::{Response, StatusCode}, middleware::{from_fn, Next}, response::Html, routing::{delete, get, post, put}, Json, Router
+    extract::{Request, State}, http::{Response, StatusCode}, middleware::{from_fn, Next}, response::Html, routing::{delete, get, post, put}, Json, Router
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde_json::{json, Value};
@@ -13,12 +13,13 @@ pub fn api_routes() -> Router<AppState> {
     Router::new()
         .route("/api", get(handler).layer(from_fn(validate_token)))
         .route("/api/register", post(handler_create_user))
-        .route("/api/login", post(handler_login))
-        .route("/api/users", put(handler_update_user))
-        .route("/api/users", delete(handler_delete_user))
+        .route("/api/login", post(handler_login).layer(from_fn(validate_token)))
+        .route("/api/users", put(handler_update_user).layer(from_fn(validate_token)))
+        .route("/api/users", delete(handler_delete_user).layer(from_fn(validate_token)))
         .route("/api/events", post(handler_create_event).layer(from_fn(validate_token)))
-        .route("/api/events", put(handler_update_event))
-        .route("/api/events", delete(handler_delete_event))
+        .route("/api/events", put(handler_update_event).layer(from_fn(validate_token)))
+        .route("/api/events", delete(handler_delete_event).layer(from_fn(validate_token)))
+        .route("/api/events", get(handler_get_events))
 }
 
 async fn validate_token(
@@ -83,6 +84,11 @@ async fn handler_update_user(State(state): State<AppState>, Json(payload): Json<
 
 async fn handler_delete_user(State(state): State<AppState>, Json(payload): Json<uuid::Uuid>) {
     state.db.delete_user(payload).await.unwrap();
+}
+
+async fn handler_get_events(State(state): State<AppState>) -> axum::Json<Value> {
+    let events = state.db.get_events().await.unwrap();
+    Json(json!({"events": events}))
 }
 
 async fn handler_create_event(State(state): State<AppState>, Json(payload): Json<CreateEvent>) {

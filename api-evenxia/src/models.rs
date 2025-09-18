@@ -60,13 +60,14 @@ pub struct CreateEvent {
     pub image_url: Option<String>,
     pub category: Option<String>,
     pub id_user: String,
+    pub places: i32,
 }
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct GetEvent {
     pub id: uuid::Uuid,
     pub title: String,
     pub description: Option<String>,
-    pub date: OffsetDateTime,
+    pub created_at: OffsetDateTime,
     pub address: String,
     pub city:String,
     pub start_date: OffsetDateTime,
@@ -74,7 +75,9 @@ pub struct GetEvent {
     pub public: bool,
     pub image_url: Option<String>,
     pub category: Option<String>,
-    pub id_user: String,
+    pub user_id: uuid::Uuid,
+    pub views: Option<i64>,
+    pub total_places: GetEventViews,
 }
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct UpdateEvent {
@@ -89,11 +92,7 @@ pub struct UpdateEvent {
     pub category: Option<String>,
     pub public: Option<bool>,
 }
-
-pub struct CreateCategory {
-    pub category: String,
-}
-
-pub struct GetCategory {
-    pub category: String,
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GetEventViews{
+    pub views: Option<i64>,
 }
