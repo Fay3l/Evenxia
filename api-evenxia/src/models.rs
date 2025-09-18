@@ -59,7 +59,7 @@ pub struct CreateEvent {
     pub end_date: Option<OffsetDateTime>,
     pub image_url: Option<String>,
     pub category: Option<String>,
-    pub id_user: String,
+    pub user_id: String,
     pub places: i32,
 }
 #[derive(Serialize, Deserialize, Clone, Debug)]

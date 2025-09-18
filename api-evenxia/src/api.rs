@@ -13,7 +13,7 @@ pub fn api_routes() -> Router<AppState> {
     Router::new()
         .route("/api", get(handler).layer(from_fn(validate_token)))
         .route("/api/register", post(handler_create_user))
-        .route("/api/login", post(handler_login).layer(from_fn(validate_token)))
+        .route("/api/login", post(handler_login))
         .route("/api/users", put(handler_update_user).layer(from_fn(validate_token)))
         .route("/api/users", delete(handler_delete_user).layer(from_fn(validate_token)))
         .route("/api/events", post(handler_create_event).layer(from_fn(validate_token)))
