@@ -224,10 +224,10 @@ impl DB {
                 category: event.category.clone(),
                 public: event.public,
                 user_id: event.user_id,
-                views: get_views.views,
+                views: get_views,
                 start_date: event.start_date,
                 end_date: event.end_date,
-                total_places: get_views,
+                total_places: event.total_places,
             };
             events.push(event);
         }

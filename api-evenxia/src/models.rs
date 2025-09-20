@@ -74,8 +74,8 @@ pub struct GetEvent {
     pub image_url: Option<String>,
     pub category: Option<String>,
     pub user_id: uuid::Uuid,
-    pub views: Option<i64>,
-    pub total_places: GetEventViews,
+    pub views: GetEventViews,
+    pub total_places: Option<i32>,
 }
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct UpdateEvent {
