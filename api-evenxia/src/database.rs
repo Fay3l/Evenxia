@@ -125,11 +125,25 @@ impl DB {
     pub async fn create_event(&self, create_event: CreateEvent) -> Result<(), sqlx::Error> {
         let id = uuid::Uuid::now_v7();
         let created_at = time::OffsetDateTime::now_utc();
-        // Convert OffsetDateTime to chrono::DateTime<Utc>
+        let format = time::macros::format_description!(
+            "[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour \
+         sign:mandatory]:[offset_minute]:[offset_second]"
+        );
+        let start_date = time::OffsetDateTime::parse(&create_event.start_date, format).unwrap();
+        info!("Parsed start_date: {:?}", start_date);
+        let end_date =  {
+            let end = create_event.end_date.as_str();
+            if end.is_empty() {
+                None
+            } else {
+                Some(time::OffsetDateTime::parse(end, format).unwrap())
+            }
+        };
+        let user_id = uuid::Uuid::parse_str(&create_event.user_id).unwrap();
         sqlx::query!(
             r#"
-            INSERT INTO events (id, title, description, created_at, address, image_url, category,start_date,end_date,total_places)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            INSERT INTO events (id, title, description, created_at, address, image_url, category,start_date,end_date,total_places,user_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             "#,
             id,
             create_event.title,
@@ -138,9 +152,10 @@ impl DB {
             create_event.address,
             create_event.image_url,
             create_event.category,
-            create_event.start_date,
-            create_event.end_date,
+            start_date,
+            end_date,
             create_event.places,
+            user_id
         )
         .execute(&self.db)
         .await?;
