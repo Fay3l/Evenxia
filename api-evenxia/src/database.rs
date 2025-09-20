@@ -128,8 +128,8 @@ impl DB {
         // Convert OffsetDateTime to chrono::DateTime<Utc>
         sqlx::query!(
             r#"
-            INSERT INTO events (id, title, description, created_at, address, image_url, category,city,start_date,end_date,total_places)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+            INSERT INTO events (id, title, description, created_at, address, image_url, category,start_date,end_date,total_places)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             "#,
             id,
             create_event.title,
@@ -138,7 +138,6 @@ impl DB {
             create_event.address,
             create_event.image_url,
             create_event.category,
-            create_event.city,
             create_event.start_date,
             create_event.end_date,
             create_event.places,
@@ -158,9 +157,8 @@ impl DB {
                 image_url = COALESCE($5, image_url),
                 category = COALESCE($6, category),
                 "public" = COALESCE($7, "public"),
-                city = COALESCE($8, city),
-                start_date = COALESCE($9, start_date),
-                end_date = COALESCE($10, end_date)
+                start_date = COALESCE($8, start_date),
+                end_date = COALESCE($9, end_date)
             WHERE id = $1
             "#,
             update_event.id,
@@ -170,7 +168,6 @@ impl DB {
             update_event.image_url,
             update_event.category,
             update_event.public,
-            update_event.city,
             update_event.start_date,
             update_event.end_date
         )
@@ -195,7 +192,7 @@ impl DB {
         let mut events = vec![];
         let _event = sqlx::query!(
             r#"
-            SELECT id, title, description, created_at, address, image_url, category,public, user_id,start_date,end_date,city,total_places FROM events
+            SELECT id, title, description, created_at, address, image_url, category,public, user_id,start_date,end_date,total_places FROM events
             "#
         )
         .fetch_all(&self.db)
@@ -215,7 +212,6 @@ impl DB {
                 views: get_views.views,
                 start_date: event.start_date,
                 end_date: event.end_date,
-                city: event.city.clone(),
                 total_places: get_views,
             };
             events.push(event);
