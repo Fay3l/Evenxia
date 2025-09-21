@@ -2,6 +2,7 @@ mod api;
 mod database;
 mod jwt;
 mod models;
+mod error;
 use axum::Router;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
