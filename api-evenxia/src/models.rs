@@ -94,3 +94,8 @@ pub struct UpdateEvent {
 pub struct GetEventViews{
     pub views: Option<i64>,
 }
+
+pub struct ViewEvent{
+    pub event_id: uuid::Uuid,
+    pub user_id: uuid::Uuid,
+}

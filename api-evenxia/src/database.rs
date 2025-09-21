@@ -2,7 +2,7 @@ use bcrypt::{hash, verify, DEFAULT_COST};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use tracing::info;
 
-use crate::models::{CreateEvent, CreateUser, GetEvent, GetEventViews, UpdateEvent, UpdateUser};
+use crate::models::{CreateEvent, CreateUser, GetEvent, GetEventViews, UpdateEvent, UpdateUser, ViewEvent};
 
 #[derive(Debug, Clone)]
 pub struct DB {
@@ -233,6 +233,23 @@ impl DB {
         }
 
         Ok(events)
+    }
+
+    pub async fn view_event(&self, view:ViewEvent) -> Result<(), sqlx::Error> {
+        let now = time::OffsetDateTime::now_utc();
+        let viewed_at = time::PrimitiveDateTime::new(now.date(), now.time());
+        sqlx::query!(
+            r#"
+            INSERT INTO event_views (event_id,user_id, viewed_at)
+            VALUES ($1, $2, $3)
+            "#,
+            view.event_id,
+            view.user_id,
+            viewed_at
+        )
+        .execute(&self.db)
+        .await?;
+        Ok(())
     }
 
     pub async fn get_viewed_event(
