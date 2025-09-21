@@ -1,6 +1,6 @@
 use axum::{http::StatusCode, response::{IntoResponse, Response}};
 
-struct AppError(anyhow::Error);
+pub struct AppError(anyhow::Error);
 
 // Tell axum how to convert `AppError` into a response.
 impl IntoResponse for AppError {
@@ -10,5 +10,14 @@ impl IntoResponse for AppError {
             format!("Something went wrong: {}", self.0),
         )
             .into_response()
+    }
+}
+
+impl<E> From<E> for AppError
+where
+    E: Into<anyhow::Error>,
+{
+    fn from(err: E) -> Self {
+        Self(err.into())
     }
 }

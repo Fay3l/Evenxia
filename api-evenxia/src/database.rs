@@ -2,7 +2,7 @@ use bcrypt::{hash, verify, DEFAULT_COST};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use tracing::info;
 
-use crate::models::{CreateEvent, CreateUser, GetEvent, GetEventViews, UpdateEvent, UpdateUser, ViewEvent};
+use crate::{models::{CreateEvent, CreateUser, GetEvent, GetEventViews, UpdateEvent, UpdateUser, ViewEvent}};
 
 #[derive(Debug, Clone)]
 pub struct DB {
