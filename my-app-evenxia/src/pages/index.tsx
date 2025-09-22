@@ -1,5 +1,3 @@
-
-import Button from "@/components/Button";
 import Card from "@/components/Card";
 import { events } from "@/types/event";
 
@@ -18,7 +16,7 @@ export default function Home() {
         <div className="flex items-center justify-center gap-4">
           <input type="text" placeholder="Chercher un événement ..." className="input input-neutral " />
         </div>
-        <div className="grid grid-cols-4 gap-4 m-8 max-md:grid grid-cols-1 max-sm:grid-cols-2 max-lg:grid-cols-2">
+        <div className="grid grid-cols-4 gap-6 m-8 max-md:grid grid-cols-1 max-sm:grid-cols-2 max-lg:grid-cols-2">
           {events.map((event) => (
             <Card
               key={event.id}

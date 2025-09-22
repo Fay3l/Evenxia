@@ -13,7 +13,7 @@ export const events: Event[] = [
     title: "Concert Rock",
     description: "Un concert en plein air.",
     startDate: "2025-09-20",
-    endDate: "2025-09-20",
+    endDate: "2025-09-21",
     address: "12 Rue des Musiciens, Paris",
   },
   {
@@ -21,7 +21,7 @@ export const events: Event[] = [
     title: "Atelier Peinture",
     description: "Cours de peinture pour débutants.",
     startDate: "2025-09-22",
-    endDate: "2025-09-22",
+    endDate: "2025-09-23",
     address: "45 Avenue des Arts, Lyon",
   },
   {
